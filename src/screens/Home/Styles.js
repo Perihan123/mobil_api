@@ -4,13 +4,12 @@ export const homeStyle = StyleSheet.create({
   headerContainer: {
     display: 'flex',
     backgroundColor: 'pink',
-    width: '96%',
     height: 40,
     justifyContent: 'center',
     alignItems: 'center',
     elevation: 5,
     padding: 5,
-    margin: 5,
+    marginBottom: 5,
   },
   header: {
     color: 'black',
@@ -20,18 +19,21 @@ export const homeStyle = StyleSheet.create({
     margin: 2,
     padding: 5,
     paddingRight: 5,
-    marginLeft: 10,
-    marginRight: 20,
     borderWidth: 2,
     height: 50,
     borderColor: '#ccc',
     backgroundColor: '#F6E7D8',
+  },
+  addBtn:{
+    position:'absolute',
+    right:5
   },
   pagination: {
     display: 'flex',
     flexDirection: 'row',
     //backgroundColor:'aqua',
     justifyContent: 'space-between',
+    alignItems:'center'
   },
   paginateButon: {
     width: 120,
@@ -46,18 +48,13 @@ export const homeStyle = StyleSheet.create({
   page: {
     width: 40,
     height: 40,
-    padding: 10,
-    margin: 10,
     borderRadius: 25,
-    marginLeft: 12,
+    justifyContent:'center',
+    alignItems:'center',
     backgroundColor: 'gray',
   },
   pageText: {
-    padding: 2,
-    margin: 1,
     fontWeight: 'bold',
-    alignItems: 'center',
-    justifyContent: 'center',
     color: 'white',
   },
   search: {

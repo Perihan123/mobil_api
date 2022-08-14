@@ -2,6 +2,7 @@ import {
   View,
   Text,
   StyleSheet,
+  Image,
   FlatList,
   TextInput,
   ActivityIndicator,
@@ -9,36 +10,27 @@ import {
 import React, {useEffect, useState} from 'react';
 import axios from 'axios';
 
-const data = [
-  {id: '1', title: 'First item'},
-  {id: '2', title: 'Second item'},
-  {id: '3', title: 'Third item'},
-  {id: '4', title: 'Fourth item'},
-];
-
 const Searching = () => {
-
   const [isLoading, setIsLoading] = useState(false);
   const [data, setData] = useState([]);
   const [error, setError] = useState(null);
-  const[query,setQuery]=useState('');
-  const[fullData,setFullData]=useState([])
-//https://randomuser.me/api/?seed=1&page=1&results=20
+  const [query, setQuery] = useState('');
+  const [fullData, setFullData] = useState([]);
+
   useEffect(() => {
     setIsLoading(true);
     axios
-    .get('https://randomuser.me/api/?seed=1&page=1&results=20')
-    .then(response => {
-      const allposts = response.data;
-      setData(allposts);
-      setFullData(allposts)
-      setIsLoading(false)
-      console.log(response.data);
-    })
-    .catch(error => {
-      setIsLoading(false);
-      setError(error);
-     } );
+      .get('https://randomuser.me/api/?seed=1&page=1&results=20')
+      .then(response => {
+        const allposts = response.data.results;
+        setData(allposts);
+        setFullData(allposts);
+        setIsLoading(false);
+      })
+      .catch(error => {
+        setIsLoading(false);
+        setError(error);
+      });
   }, []);
   if (isLoading) {
     return (
@@ -55,16 +47,15 @@ const Searching = () => {
     );
   }
 
-  const renderHeader=()=> {
+  const renderHeader = () => {
     return (
       <View
         style={{
           backgroundColor: '#fff',
           padding: 10,
           marginVertical: 10,
-          borderRadius: 20
-        }}
-      >
+          borderRadius: 20,
+        }}>
         <TextInput
           autoCapitalize="none"
           autoCorrect={false}
@@ -72,37 +63,41 @@ const Searching = () => {
           value={query}
           onChangeText={queryText => handleSearch(queryText)}
           placeholder="Search"
-          style={{ backgroundColor: '#fff', paddingHorizontal: 20 }}
+          style={{backgroundColor: '#fff', paddingHorizontal: 20}}
         />
       </View>
     );
-  }
-  
+  };
 
   const handleSearch = text => {
     const formattedQuery = text.toLowerCase();
-    const filteredData = filter(fullData, user => {
+    const filteredData = fullData.filter(user => {
       return contains(user, formattedQuery);
     });
     setData(filteredData);
     setQuery(text);
   };
-   
-  const contains = ({ name, email }, query) => {
-    const { first, last } = name;
-   
-    if (first.includes(query) || last.includes(query) || email.includes(query)) {
+
+  const contains = ({name, email}, query) => {
+    const {first, last} = name;
+
+    if (
+      first.includes(query) ||
+      last.includes(query) ||
+      email.includes(query)
+    ) {
       return true;
     }
-   
+
     return false;
   };
   return (
     <View style={styles.container}>
       <Text style={styles.text}> Fovorite Contacts</Text>
+      {renderHeader()}
       <FlatList
         data={data}
-        ListHeaderComponent={renderHeader}
+        // ListHeaderComponent={renderHeader}
         keyExtractor={item => item.first}
         renderItem={({item}) => (
           <View style={styles.listItem}>
@@ -111,7 +106,10 @@ const Searching = () => {
               style={styles.coverImage}
             />
             <View style={styles.metaInfo}>
-              <Text style={styles.title}>{`${item.name.first}  ${item.name.last}`}</Text>
+              <Text
+                style={
+                  styles.title
+                }>{`${item.name.first}  ${item.name.last}`}</Text>
             </View>
           </View>
         )}
@@ -138,18 +136,18 @@ const styles = StyleSheet.create({
     backgroundColor: ' #fff',
     width: '100%',
   },
-  coverImage:{
-    width:100,
-    height:100,
-    borderRadius:8
+  coverImage: {
+    width: 100,
+    height: 100,
+    borderRadius: 8,
   },
-  metaInfo:{
-    marginLeft:10
+  metaInfo: {
+    marginLeft: 10,
   },
-  title:{
-    fontSize:18,
-    width:200,
-    padding:10
-  }
+  title: {
+    fontSize: 18,
+    width: 200,
+    padding: 10,
+  },
 });
 export default Searching;

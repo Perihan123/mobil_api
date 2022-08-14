@@ -7,21 +7,21 @@ import {
   TextInput,
   ActivityIndicator,
 } from 'react-native';
-import filter from "lodash.filter"
+import filter from 'lodash.filter';
 import React, {useEffect, useState} from 'react';
 import axios from 'axios';
 import Detail from '../Detail/Detail';
 import {homeStyle} from './Styles';
-import { CommonActions } from '@react-navigation/native';
+import {CommonActions} from '@react-navigation/native';
 const Jsonplaceholder = ({navigation, route}) => {
   //Veriyi tutacaım değişken
   const [page, setPage] = useState(0);
   const [loading, setLoading] = useState(false);
-  const [myData, setMyData] = useState([]);//verilerimi kaydettiğim state
-  const[error,setError]=useState(null);
+  const [myData, setMyData] = useState([]); //verilerimi kaydettiğim state
+  const [error, setError] = useState(null);
   const [search, setSearch] = useState(null);
- const [query,setQuery]=useState('');
- const[fullData,setFullData]=useState([]);
+  const [query, setQuery] = useState('');
+  const [fullData, setFullData] = useState([]);
   const perPage = 10;
 
   const getPosts = async () => {
@@ -30,13 +30,14 @@ const Jsonplaceholder = ({navigation, route}) => {
       .then(response => {
         const allposts = response.data;
         setMyData(allposts);
-        setLoading(false)
+        setFullData(allposts);
+        setLoading(false);
         console.log(response.data);
       })
       .catch(error => {
         setLoading(false);
         setError(error);
-       } );
+      });
   };
 
   useEffect(() => {
@@ -49,51 +50,77 @@ const Jsonplaceholder = ({navigation, route}) => {
       data,
     });
   };
-  if(loading){
+  if (loading) {
     return (
-      <View style={{display:'flex',flex:1,Jsonplaceholder:'center',alignItems:'center'}}>
-        <ActivityIndicator size="large" color="#5500dc"/>
+      <View
+        style={{
+          display: 'flex',
+          flex: 1,
+          justifyContent: 'center',
+          alignItems: 'center',
+        }}>
+        <ActivityIndicator size="large" color="#5500dc" />
         <Text>Loading...</Text>
       </View>
-    )
+    );
   }
-  if(error){
-    return(
-      <View style={{display:"flex",justifyContent:"center",alignItems:"center"}}>
-        <Text style={{fontSize:18}}>
+  if (error) {
+    return (
+      <View
+        style={{
+          display: 'flex',
+          justifyContent: 'center',
+          alignItems: 'center',
+        }}>
+        <Text style={{fontSize: 18}}>
           Error fetching data ....Check your network connection!
-
         </Text>
       </View>
-    )
+    );
   }
 
   const nextPage = () => {
-    const a = myData.length / (page + 1);
-    if (a === perPage) {
+    // const a = myData.length / (page + 1);
+    // if (a === perPage) {
+    //   Alert.alert('Bitti');
+    // } else setPage(page + 1);
+    const totalPage = myData.length / perPage;
+    if (totalPage - 1 <= page) {
       Alert.alert('Bitti');
     } else setPage(page + 1);
   };
- const handleSearch=text =>{
 
-const unique=data.filter(test)
+  const handleSearch = text => {
+    const filteredData = fullData.filter(data => data.title.includes(text));
+    setMyData(filteredData);
+    setQuery(text);
+    setPage(0);
+  };
 
-}
-
- 
   return (
     <ScrollView>
       <View style={homeStyle.headerContainer}>
         <Text style={homeStyle.header}>HEADER</Text>
+        <TouchableOpacity style={[homeStyle.addBtn]}>
+          <Text style={{textTransform:'uppercase',fontWeight:'700'}}>Add</Text>
+        </TouchableOpacity>
       </View>
-      <View style={{backgroundColor:'#fff',padding:10,marginVertical:10,borderRadius:20}}>
-      <TextInput autoCapitalize='none'
-      autoCorrect={false}
-      clearButtonMode="always"
-      value={query}
-      onChangeText={queryText=>handleSearch(queryText)}
-      placeholder="Search"
-      style={{backgroundColor:'#fff',paddingHorizontal:20}}/>        
+      <View
+        style={{
+          backgroundColor: '#fff',
+          padding: 10,
+          marginVertical: 10,
+          borderRadius: 20,
+        }}>
+        <TextInput
+          autoCapitalize="none"
+          autoCorrect={false}
+          clearButtonMode="always"
+          value={query}
+          onChangeText={queryText => handleSearch(queryText)}
+          placeholder="Search"
+          style={{backgroundColor: '#fff', paddingHorizontal: 20}}
+        />
       </View>
       {myData.slice(page * perPage, (page + 1) * perPage).map(item => {
         return (
@@ -101,11 +128,18 @@ const unique=data.filter(test)
             key={item.id}
             style={homeStyle.buton}
             onPress={() => handleClick(item)}>
-            <View style={{display: 'flex', flexDirection: 'row'}}>
+            <View
+              style={{
+                display: 'flex',
+                flexDirection: 'row',
+                alignItems: 'center',
+              }}>
               <View
                 style={{
                   margin: 5,
                   marginRight: 10,
+                  justifyContent: 'center',
+                  alignItems: 'center',
                   width: 30,
                   height: 30,
                   backgroundColor: 'pink',
@@ -114,20 +148,13 @@ const unique=data.filter(test)
                 }}>
                 <Text
                   style={{
-                    justifyContent: 'center',
-                    alignItems: 'center',
-                    paddingLeft: 5,
                     fontWeight: 'bold',
-                    padding: 4,
                   }}>
                   {item.id}
                 </Text>
               </View>
               <Text
                 style={{
-                  justifyContent: 'center',
-                  alignItems: 'center',
-                  marginTop: 8,
                   flexShrink: 1,
                 }}>
                 {item.title}
@@ -144,7 +171,7 @@ const unique=data.filter(test)
           <Text style={{color: 'white'}}>Geri</Text>
         </TouchableOpacity>
         <View style={homeStyle.page}>
-          <Text style={homeStyle.pageText}> {page + 1}</Text>
+          <Text style={homeStyle.pageText}>{page + 1}</Text>
         </View>
         <TouchableOpacity style={homeStyle.paginateButon} onPress={nextPage}>
           <Text style={{color: 'white'}}>İleri</Text>
